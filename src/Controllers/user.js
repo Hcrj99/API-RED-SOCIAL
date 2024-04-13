@@ -1,5 +1,5 @@
-const { json } = require('express');
 const user = require('../Models/user');
+const bcrypt = require('bcrypt');
 
 const getUsers = (req, res) => {
     return res.status(200).send({
@@ -22,25 +22,27 @@ const registerUser = (req, res) => {
         });
     };
 
-    let userSave = new user(params);
-
     //duplicate user control
     user.find({
         $or: [
-            { email: userSave.email.toLowerCase() },
-            { nick: userSave.nick.toLowerCase() }
+            { email: params.email.toLowerCase() },
+            { nick: params.nick.toLowerCase() }
         ]
-    }).then(users => {
+    }).then(async(users) => {
         if (users && users.length >= 1) {
             return res.status(200).send({
                 status: 'success',
                 message: 'the user exists'
             })
         }
-        //code password
+        //Crypt password
+        let pwd = await bcrypt.hash(params.password, 10);
+        params.password = pwd;
 
+        let userSave = new user(params);
 
         //save user in db
+        
 
         return res.status(200).json({
             status: 'success',
