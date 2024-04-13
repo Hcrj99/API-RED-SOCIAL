@@ -21,9 +21,9 @@ const userRoute = require(`./${version}/Routes/user`);
 const followRoute = require(`./${version}/Routes/follow`);
 const publicationRoute = require(`./${version}/Routes/publication`);
 
-app.use(`/api${version}`, userRoute);
-app.use(`/api${version}`, followRoute);
-app.use(`/api${version}`, publicationRoute);
+app.use(`/api${version}/user`, userRoute);
+app.use(`/api${version}/follow`, followRoute);
+app.use(`/api${version}/publication`, publicationRoute);
 
 //*-------RUN SERVER BACKEND-------
 app.listen(serverPort, () => {
