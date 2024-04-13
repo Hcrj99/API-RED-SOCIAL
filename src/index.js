@@ -13,7 +13,7 @@ const serverPort = 3900;
 app.use(cors());
 //convert data of body to objects js
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));//every data formurlcode convert in object js
+app.use(express.urlencoded({ extended: true }));//every data formurlcode convert in object js
 
 //*-------MAIN ROUTES-------------
 const version = 'v1';
@@ -21,9 +21,9 @@ const userRoute = require(`./${version}/Routes/user`);
 const followRoute = require(`./${version}/Routes/follow`);
 const publicationRoute = require(`./${version}/Routes/publication`);
 
-app.use(`/api${version}` , userRoute);
-app.use(`/api${version}` , followRoute);
-app.use(`/api${version}` , publicationRoute);
+app.use(`/api${version}`, userRoute);
+app.use(`/api${version}`, followRoute);
+app.use(`/api${version}`, publicationRoute);
 
 //*-------RUN SERVER BACKEND-------
 app.listen(serverPort, () => {
