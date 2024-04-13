@@ -28,7 +28,7 @@ const registerUser = (req, res) => {
             { email: params.email.toLowerCase() },
             { nick: params.nick.toLowerCase() }
         ]
-    }).then(async(users) => {
+    }).then(async (users) => {
         if (users && users.length >= 1) {
             return res.status(200).send({
                 status: 'success',
@@ -42,12 +42,17 @@ const registerUser = (req, res) => {
         let userSave = new user(params);
 
         //save user in db
-        
-
-        return res.status(200).json({
-            status: 'success',
-            message: 'action register users',
-            userSave
+        userSave.save().then((userStored) => {
+            return res.status(201).send({
+                status: 'success',
+                message: 'User register ok',
+                userStored
+            })
+        }).catch(error => {
+            return res.status(503).send({
+                status: 'error',
+                message: 'User register erorr'
+            })
         });
 
     }).catch(error => {
