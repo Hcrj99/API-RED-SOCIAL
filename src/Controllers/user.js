@@ -5,7 +5,7 @@ const jwt = require('../Services/jwt');
 const getUsers = (req, res) => {
     return res.status(200).send({
         message: 'send data from controlers',
-        user : req.user
+        user: req.user
     })
 };
 
@@ -86,11 +86,11 @@ const userLogin = (req, res) => {
 
         //validate password
         let pwd = bcrypt.compareSync(params.password, user.password);
-        
-        if(!pwd){
+
+        if (!pwd) {
             return res.status(401).send({
-                status : 'error',
-                message : 'incorret password'
+                status: 'error',
+                message: 'incorret password'
             })
         }
 
@@ -101,10 +101,10 @@ const userLogin = (req, res) => {
         return res.status(202).send({
             status: 'success',
             message: 'user login access',
-            user : {
-                id : user._id,
-                name : user.name,
-                nick : user.nick
+            user: {
+                id: user._id,
+                name: user.name,
+                nick: user.nick
             },
             token
         })
