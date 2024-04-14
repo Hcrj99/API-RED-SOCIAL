@@ -4,7 +4,8 @@ const jwt = require('../Services/jwt');
 
 const getUsers = (req, res) => {
     return res.status(200).send({
-        message: 'send data from controlers'
+        message: 'send data from controlers',
+        user : req.user
     })
 };
 

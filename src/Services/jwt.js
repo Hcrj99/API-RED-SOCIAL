@@ -5,7 +5,7 @@ const moment = require('moment');//Import moment
 const secretKey = 'SeCRET_keY_ApI_RED_sociAL_98674563';
 
 //function to create tokens
-exports.generateToken = (user) => {
+const generateToken = (user) => {
     const payload = {
         id: user._id,
         name: user.name,
@@ -20,4 +20,9 @@ exports.generateToken = (user) => {
 
     //give token
     return jwt.encode(payload, secretKey);
+}
+
+module.exports = {
+    generateToken,
+    secretKey
 }
