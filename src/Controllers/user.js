@@ -51,7 +51,7 @@ const registerUser = (req, res) => {
         }).catch(error => {
             return res.status(503).send({
                 status: 'error',
-                message: 'User register erorr'
+                message: 'User register error'
             })
         });
 
@@ -63,8 +63,42 @@ const registerUser = (req, res) => {
     });
 };
 
+const userLogin = (req, res) => {
+    //get data
+    let params = req.body;
+
+    if (!params.email || !params.password) {
+        return res.status(401).send({
+            status: 'error',
+            message: 'user or password are empty'
+        })
+    }
+    //find user exists
+    user.findOne({ email: params.email }).select({ 'password': 0 }).then(userFromStorage => {
+        if (userFromStorage === null) {
+            return res.status(404).send({
+                status: 'error',
+                message: 'user dont found'
+            })
+        }
+
+        //validate password
+        console.log(userFromStorage);
+        //give token 
+
+        //give data user 
+        return res.status(202).send({
+            status: 'success',
+            message: 'user login access',
+            userFromStorage
+        })
+
+    })
+}
+
 module.exports = {
     getUsers,
     getUser,
-    registerUser
+    registerUser,
+    userLogin
 }
