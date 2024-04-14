@@ -74,8 +74,8 @@ const userLogin = (req, res) => {
         })
     }
     //find user exists
-    user.findOne({ email: params.email }).select({ 'password': 0 }).then(userFromStorage => {
-        if (userFromStorage === null) {
+    user.findOne({ email: params.email }).then((user) => {
+        if (user === null) {
             return res.status(404).send({
                 status: 'error',
                 message: 'user dont found'
@@ -83,16 +83,29 @@ const userLogin = (req, res) => {
         }
 
         //validate password
-        console.log(userFromStorage);
-        //give token 
+        let pwd = bcrypt.compareSync(params.password, user.password);
+        
+        if(!pwd){
+            return res.status(401).send({
+                status : 'error',
+                message : 'incorret password'
+            })
+        }
+
+        //get + give token 
+        const token = false;
 
         //give data user 
         return res.status(202).send({
             status: 'success',
             message: 'user login access',
-            userFromStorage
+            user : {
+                id : user._id,
+                name : user.name,
+                nick : user.nick
+            },
+            token
         })
-
     })
 }
 
