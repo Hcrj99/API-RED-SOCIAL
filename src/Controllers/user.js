@@ -1,5 +1,6 @@
 const user = require('../Models/user');
 const bcrypt = require('bcrypt');
+const jwt = require('../Services/jwt');
 
 const getUsers = (req, res) => {
     return res.status(200).send({
@@ -93,7 +94,7 @@ const userLogin = (req, res) => {
         }
 
         //get + give token 
-        const token = false;
+        const token = jwt.generateToken(user);
 
         //give data user 
         return res.status(202).send({
