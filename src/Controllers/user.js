@@ -10,7 +10,23 @@ const getUsers = (req, res) => {
 };
 
 const getUser = (req, res) => {
+    //get param id of user by url
+    const id = req.params.id;
+    //get data user
 
+    user.findById(id).select({ password: 0, role: 0 }).then(userProfile => {
+        return res.status(200).send({
+            status: 'success',
+            userProfile
+        })
+    }).catch(error => {
+        return res.status(404).json({
+            status: 'error',
+            message: 'user not found'
+        })
+    });
+
+    //return result
 };
 
 const registerUser = (req, res) => {
