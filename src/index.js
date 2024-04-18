@@ -8,7 +8,7 @@ connectionDB();
 
 //*------CREATE NODE SERVER WITH EXPRESS-----
 const app = express();
-const serverPort = 3900;
+const serverPort = process.env.PORT || 3900;
 //configure cors
 app.use(cors());
 //convert data of body to objects js

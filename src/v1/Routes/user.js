@@ -5,9 +5,9 @@ const check = require('../../Middlewares/auth');
 
 
 //*ROUTER USER
-router.get('/users', check.auth, userController.getUsers);//Get users
+router.get('/listprofiles/:page?', check.auth, userController.getUsers);//Get users
 router.post('/register', userController.registerUser);//Register user
 router.post('/login', userController.userLogin);//Login user
-router.get('/user/:id', check.auth, userController.getUser);//get user
+router.get('/profile/:id', check.auth, userController.getUser);//get user
 
 module.exports = router;

@@ -1,8 +1,12 @@
 const jwt = require('jwt-simple');//Import jwt
 const moment = require('moment');//Import moment
 
+if(process.env.NODE_ENV !== 'production'){
+    require('dotenv').config();
+}
+
 //secret key
-const secretKey = 'SeCRET_keY_ApI_RED_sociAL_98674563';
+const secretKey = process.env.SECRETKEY;
 
 //function to create tokens
 const generateToken = (user) => {

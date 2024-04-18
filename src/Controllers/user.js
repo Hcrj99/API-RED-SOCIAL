@@ -3,6 +3,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('../Services/jwt');
 
 const getUsers = (req, res) => {
+    //Control page 
+    
+    //moongose pagination
+
+    //return result
     return res.status(200).send({
         message: 'send data from controlers',
         user: req.user
