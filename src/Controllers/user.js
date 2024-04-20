@@ -2,11 +2,12 @@ const user = require('../Models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('../Services/jwt');
 const moongosePagination = require('mongoose-pagination');
+const fs = require('fs');
 
 const getUsers = (req, res) => {
     //Control page 
     let page = 1;
-    if(req.params.page){
+    if (req.params.page) {
         page = req.params.page;
     }
     //moongose pagination
@@ -15,7 +16,7 @@ const getUsers = (req, res) => {
     let itemsPage = 5;
 
     user.find().sort('_id').paginate(page, itemsPage).then((users) => {
-        if(!users){
+        if (!users) {
             return res.status(404).send({
                 status: 'error',
                 message: 'users not found'
@@ -25,7 +26,7 @@ const getUsers = (req, res) => {
             status: 'success',
             message: 'List of users',
             page,
-            itemsPage, 
+            itemsPage,
             users,
         })
     }).catch(error => {
@@ -176,7 +177,7 @@ const updateUser = (req, res) => {
         users.forEach(user => {
             console.log(user._id);
             console.log(userIdentity.id);
-            if(JSON.stringify(user._id) !== JSON.stringify(userIdentity.id)) {
+            if (JSON.stringify(user._id) !== JSON.stringify(userIdentity.id)) {
                 userIsset = true;
             }
         });
@@ -187,17 +188,17 @@ const updateUser = (req, res) => {
                 message: 'the user exists'
             })
         };
-        
+
         //Crypt password
-        if(userUpdate.password){
+        if (userUpdate.password) {
             let pwd = await bcrypt.hash(userUpdate.password, 10);
             userUpdate.password = pwd;
-        }   
+        }
 
         //find + update
-        user.findByIdAndUpdate(userIdentity.id, userUpdate, {new: true}).then(userUpdated => {
+        user.findByIdAndUpdate(userIdentity.id, userUpdate, { new: true }).then(userUpdated => {
             return res.status(200).send({
-                status : 'success',
+                status: 'success',
                 message: 'user update',
                 user: userUpdated
             })
@@ -215,11 +216,46 @@ const updateUser = (req, res) => {
     });
 }
 
-const upload = (req, res)=> {
-    return res.status(200).send({
-        status: 'success',
-        message: 'enter upload',
-        files: req.file
+const upload = (req, res) => {
+
+    //get image if exists
+    if (!req.file) {
+        return res.status(404).send({
+            status: 'error',
+            message: 'Not recive file'
+        })
+    };
+
+    //get name document
+    let image = req.file.originalname;
+
+    //get extension + verify + save in db
+    const imageSplit = image.split('\.');
+    const extension = imageSplit[1];
+
+    if (extension !== 'png' && extension !== 'jpg' && extension !== 'jpeg' && extension !== 'gif') {
+
+        const filePath = req.file.path;
+        const fileDelete = fs.unlinkSync(filePath);
+
+        return res.status(400).json({
+            status: 'error',
+            message: 'Incorrect extension'
+        })
+    };
+    //save ind db
+    user.findOneAndUpdate({_id: req.user.id}, { image: req.file.filename }, { new: true }).then(fileSave => {
+        return res.status(200).send({
+            status: 'success',
+            message: 'Upload correct',
+            user: fileSave,
+            files: req.file
+        })
+    }).catch(error => {
+        return res.status(400).send({
+            status: 'error',
+            message: 'error upload avatar'
+        })
     })
 }
 
