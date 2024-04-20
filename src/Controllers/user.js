@@ -204,7 +204,7 @@ const updateUser = (req, res) => {
         }).catch(error => {
             return res.status(400).send({
                 status: 'error',
-                message: 'user nto update'
+                message: 'user not update'
             })
         })
     }).catch(error => {
@@ -213,16 +213,14 @@ const updateUser = (req, res) => {
             message: 'error in consult users'
         })
     });
+}
 
-    //find + update the user
-
-    //password crypt
-
-    // return res.status(200).send({
-    //     status: 'success',
-    //     message: 'edit user',
-    //     userIdentity
-    // })
+const upload = (req, res)=> {
+    return res.status(200).send({
+        status: 'success',
+        message: 'enter upload',
+        files: req.file
+    })
 }
 
 module.exports = {
@@ -230,5 +228,6 @@ module.exports = {
     getUser,
     registerUser,
     userLogin,
-    updateUser
+    updateUser,
+    upload
 }
