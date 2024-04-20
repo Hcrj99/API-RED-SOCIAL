@@ -8,6 +8,9 @@ const userSchema = Schema({
     surname: {
         type: String
     },
+    bio: {
+        type: String,
+    },
     nick: {
         type: String,
         required: true

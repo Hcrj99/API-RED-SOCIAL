@@ -154,9 +154,81 @@ const userLogin = (req, res) => {
     })
 }
 
+
+const updateUser = (req, res) => {
+    //get info of the user to update
+    let userIdentity = req.user;
+    let userUpdate = req.body;
+
+    delete userIdentity.iat;
+    delete userIdentity.exp;
+    delete userIdentity.role;
+    delete userIdentity.image;
+
+    //check if the user exitsts
+    user.find({
+        $or: [
+            { email: userUpdate.email.toLowerCase() },
+            { nick: userUpdate.nick.toLowerCase() }
+        ]
+    }).then(async (users) => {
+        let userIsset = false;
+        users.forEach(user => {
+            console.log(user._id);
+            console.log(userIdentity.id);
+            if(JSON.stringify(user._id) !== JSON.stringify(userIdentity.id)) {
+                userIsset = true;
+            }
+        });
+
+        if (userIsset) {
+            return res.status(200).send({
+                status: 'success',
+                message: 'the user exists'
+            })
+        };
+        
+        //Crypt password
+        if(userUpdate.password){
+            let pwd = await bcrypt.hash(userUpdate.password, 10);
+            userUpdate.password = pwd;
+        }   
+
+        //find + update
+        user.findByIdAndUpdate(userIdentity.id, userUpdate, {new: true}).then(userUpdated => {
+            return res.status(200).send({
+                status : 'success',
+                message: 'user update',
+                user: userUpdated
+            })
+        }).catch(error => {
+            return res.status(400).send({
+                status: 'error',
+                message: 'user nto update'
+            })
+        })
+    }).catch(error => {
+        return res.status(error).json({
+            status: 'error',
+            message: 'error in consult users'
+        })
+    });
+
+    //find + update the user
+
+    //password crypt
+
+    // return res.status(200).send({
+    //     status: 'success',
+    //     message: 'edit user',
+    //     userIdentity
+    // })
+}
+
 module.exports = {
     getUsers,
     getUser,
     registerUser,
-    userLogin
+    userLogin,
+    updateUser
 }

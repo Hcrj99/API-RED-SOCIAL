@@ -9,5 +9,6 @@ router.get('/listprofiles/:page?', check.auth, userController.getUsers);//Get us
 router.post('/register', userController.registerUser);//Register user
 router.post('/login', userController.userLogin);//Login user
 router.get('/profile/:id', check.auth, userController.getUser);//get user
+router.put('/update', check.auth, userController.updateUser);//Update user
 
 module.exports = router;
