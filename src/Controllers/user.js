@@ -1,17 +1,39 @@
 const user = require('../Models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('../Services/jwt');
+const moongosePagination = require('mongoose-pagination');
 
 const getUsers = (req, res) => {
     //Control page 
-    
+    let page = 1;
+    if(req.params.page){
+        page = req.params.page;
+    }
     //moongose pagination
+    page = parseInt(page);
 
-    //return result
-    return res.status(200).send({
-        message: 'send data from controlers',
-        user: req.user
-    })
+    let itemsPage = 5;
+
+    user.find().sort('_id').paginate(page, itemsPage).then((users) => {
+        if(!users){
+            return res.status(404).send({
+                status: 'error',
+                message: 'users not found'
+            })
+        };
+        return res.status(200).send({
+            status: 'success',
+            message: 'List of users',
+            page,
+            itemsPage, 
+            users,
+        })
+    }).catch(error => {
+        return res.status(404).send({
+            status: 'error',
+            message: 'users not found'
+        })
+    });
 };
 
 const getUser = (req, res) => {
