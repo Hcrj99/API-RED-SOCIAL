@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('../Services/jwt');
 const moongosePagination = require('mongoose-pagination');
 const fs = require('fs');
+const path = require('path');
 
 const getUsers = (req, res) => {
     //Control page 
@@ -153,7 +154,7 @@ const userLogin = (req, res) => {
             token
         })
     })
-}
+};
 
 
 const updateUser = (req, res) => {
@@ -166,7 +167,7 @@ const updateUser = (req, res) => {
     delete userIdentity.role;
     delete userIdentity.image;
 
-    //check if the user exitsts
+    //check if the user exists
     user.find({
         $or: [
             { email: userUpdate.email.toLowerCase() },
@@ -214,7 +215,7 @@ const updateUser = (req, res) => {
             message: 'error in consult users'
         })
     });
-}
+};
 
 const upload = (req, res) => {
 
@@ -257,7 +258,25 @@ const upload = (req, res) => {
             message: 'error upload avatar'
         })
     })
-}
+};
+
+const getAvatar = (req, res) => {
+    //get parameter from  url
+    const file = req.params.file;
+    //get path
+    const filePath = './src/Uploads/Avatars/'+file;
+    //if the file exists 
+    fs.stat(filePath, (error, exists) => {
+        if(error){
+            return res.status(404).send({
+                status: 'error',
+                message: 'Not found the file'
+            })
+        }
+
+        return res.sendFile(path.resolve(filePath));
+    });
+};
 
 module.exports = {
     getUsers,
@@ -265,5 +284,6 @@ module.exports = {
     registerUser,
     userLogin,
     updateUser,
-    upload
+    upload,
+    getAvatar
 }
