@@ -197,7 +197,7 @@ const updateUser = (req, res) => {
         }
 
         //find + update
-        user.findByIdAndUpdate(userIdentity.id, userUpdate, { new: true }).then(userUpdated => {
+        user.findByIdAndUpdate({_id: userIdentity.id}, userUpdate, { new: true }).then(userUpdated => {
             return res.status(200).send({
                 status: 'success',
                 message: 'user update',
