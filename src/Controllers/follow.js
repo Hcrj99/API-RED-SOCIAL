@@ -1,6 +1,5 @@
 const follow = require('../Models/follow');
 const user = require('../Models/user');
-const moongosePagination = require('mongoose-pagination');
 
 const getFollows = (req, res) =>{
     return res.status(200).send({

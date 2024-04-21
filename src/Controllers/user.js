@@ -1,7 +1,6 @@
 const user = require('../Models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('../Services/jwt');
-const moongosePagination = require('mongoose-pagination');
 const fs = require('fs');
 const path = require('path');
 
@@ -12,11 +11,12 @@ const getUsers = (req, res) => {
         page = req.params.page;
     }
     //moongose pagination
-    page = parseInt(page);
+    const options = {
+        limit: 5,
+        page: page
+    }
 
-    let itemsPage = 5;
-
-    user.find().sort('_id').paginate(page, itemsPage).then((users) => {
+    user.paginate({}, options).then((users, total) => {
         if (!users) {
             return res.status(404).send({
                 status: 'error',
@@ -26,9 +26,8 @@ const getUsers = (req, res) => {
         return res.status(200).send({
             status: 'success',
             message: 'List of users',
-            page,
-            itemsPage,
-            users,
+            users: users.docs,
+            total: users.totalDocs
         })
     }).catch(error => {
         return res.status(404).send({
@@ -197,7 +196,7 @@ const updateUser = (req, res) => {
         }
 
         //find + update
-        user.findByIdAndUpdate({_id: userIdentity.id}, userUpdate, { new: true }).then(userUpdated => {
+        user.findByIdAndUpdate({ _id: userIdentity.id }, userUpdate, { new: true }).then(userUpdated => {
             return res.status(200).send({
                 status: 'success',
                 message: 'user update',
@@ -245,7 +244,7 @@ const upload = (req, res) => {
         })
     };
     //save ind db
-    user.findOneAndUpdate({_id: req.user.id}, { image: req.file.filename }, { new: true }).then(fileSave => {
+    user.findOneAndUpdate({ _id: req.user.id }, { image: req.file.filename }, { new: true }).then(fileSave => {
         return res.status(200).send({
             status: 'success',
             message: 'Upload correct',
@@ -264,10 +263,10 @@ const getAvatar = (req, res) => {
     //get parameter from  url
     const file = req.params.file;
     //get path
-    const filePath = './src/Uploads/Avatars/'+file;
+    const filePath = './src/Uploads/Avatars/' + file;
     //if the file exists 
     fs.stat(filePath, (error, exists) => {
-        if(error){
+        if (error) {
             return res.status(404).send({
                 status: 'error',
                 message: 'Not found the file'
