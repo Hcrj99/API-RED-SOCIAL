@@ -7,6 +7,7 @@ const check = require('../../Middlewares/auth');
 //*ROUTER FOLLOW
 router.get('/getfollows', followController.getFollows);//Get follows
 router.post('/save', check.auth, followController.saveFollow);//follow user
+router.delete('/unfollow/:id', check.auth, followController.unfollow)//delete follow
 
 
 module.exports = router;

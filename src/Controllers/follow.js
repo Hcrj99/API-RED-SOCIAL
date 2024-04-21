@@ -32,7 +32,31 @@ const saveFollow = (req, res) => {
     });
 };
 
+const unfollow = (req, res) => {
+    //get id user identify
+    const userIdentity = req.user.id;
+    //get id user to unfollow
+    const followedId = req.params.id;
+    //find id user 
+    follow.findOneAndDelete({
+        'user': userIdentity,
+        'followed': followedId
+    }).then(userFollowDelete => {
+        return res.status(200).send({
+            status: 'success',
+            message: 'unfollow user: ',
+            user: userFollowDelete
+        })
+    }).catch(error => {
+        return res.status(400).send({
+            status: 'error',
+            message: 'unfollow process error'
+        })
+    });
+};
+
 module.exports = {
     getFollows,
-    saveFollow
+    saveFollow,
+    unfollow
 }
