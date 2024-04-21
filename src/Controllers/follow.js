@@ -1,5 +1,6 @@
 const follow = require('../Models/follow');
 const user = require('../Models/user');
+const moongosePagination = require('mongoose-pagination');
 
 const getFollows = (req, res) =>{
     return res.status(200).send({
@@ -55,8 +56,40 @@ const unfollow = (req, res) => {
     });
 };
 
+const following = (req, res) => {
+    //get id user loged
+    let userId = req.user.id;
+    //get id by parameter + page
+    if(req.params.id) userId = req.params.id;
+    let page = 1;
+    if(req.params.page) page = req.params.page;
+    //user to page
+    const itemPerPage = 5;
+    //find follows
+    follow.find({user: userId}).populate('user followed' , '-password -role -__v').paginate(page, itemPerPage).then(follows  => {
+        return res.status(200).send({
+            status: 'success',
+            follows,
+        })
+    }).catch(error => {
+        return res.status(400).send({
+            status: 'error',
+            message: 'error find users'
+        })
+    });
+};
+
+const followed = (req, res) => {
+    return res.status(200).send({
+        status: 'success',
+        message: 'followed: ',
+    })
+};
+
 module.exports = {
     getFollows,
     saveFollow,
-    unfollow
+    unfollow,
+    following,
+    followed
 }
