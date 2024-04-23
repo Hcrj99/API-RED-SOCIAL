@@ -1,5 +1,6 @@
 const follow = require('../Models/follow');
 const user = require('../Models/user');
+const followService = require('../Services/followUserIds');
 
 const getFollows = (req, res) =>{
     return res.status(200).send({
@@ -69,12 +70,19 @@ const following = (req, res) => {
         populate: {path : 'user followed', select:'-password -role -__v'}
     }
     //find follows
-    follow.paginate({}, options).then(follows  => {
+    follow.paginate({}, options).then(async(follows)  => {
+
+        //list of follow of the user that the user loged see
+        //get id users that follow user loged + user that user loged follow
+        let folloUserIds = await followService.followUserIds(req.user.id);
+
         return res.status(200).send({
             status: 'success',
             follows: follows.docs,
             total: follows.totalDocs,
-            totalpages: follows.totalPages
+            totalpages: follows.totalPages,
+            userfollowing: folloUserIds.following,
+            userfollowme: folloUserIds.followers
         })
     }).catch(error => {
         return res.status(400).send({
