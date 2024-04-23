@@ -63,12 +63,18 @@ const following = (req, res) => {
     let page = 1;
     if(req.params.page) page = req.params.page;
     //user to page
-    const itemPerPage = 5;
+    const options = {
+        limit: 5,
+        page: page,
+        populate: {path : 'user followed', select:'-password -role -__v'}
+    }
     //find follows
-    follow.find({user: userId}).populate('user followed' , '-password -role -__v').paginate(page, itemPerPage).then(follows  => {
+    follow.paginate({}, options).then(follows  => {
         return res.status(200).send({
             status: 'success',
-            follows,
+            follows: follows.docs,
+            total: follows.totalDocs,
+            totalpages: follows.totalPages
         })
     }).catch(error => {
         return res.status(400).send({

@@ -16,7 +16,7 @@ const getUsers = (req, res) => {
         page: page
     }
 
-    user.paginate({}, options).then((users, total) => {
+    user.paginate({}, options).then(users => {
         if (!users) {
             return res.status(404).send({
                 status: 'error',
@@ -27,7 +27,8 @@ const getUsers = (req, res) => {
             status: 'success',
             message: 'List of users',
             users: users.docs,
-            total: users.totalDocs
+            total: users.totalDocs,
+            totalpages: users.totalPages
         })
     }).catch(error => {
         return res.status(404).send({
