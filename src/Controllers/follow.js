@@ -70,7 +70,7 @@ const following = (req, res) => {
         populate: {path : 'user followed', select:'-password -role -__v'}
     }
     //find follows
-    follow.paginate({}, options).then(async(follows)  => {
+    follow.paginate({'user': userId}, options).then(async(follows)  => {
 
         //list of follow of the user that the user loged see
         //get id users that follow user loged + user that user loged follow
@@ -93,10 +93,37 @@ const following = (req, res) => {
 };
 
 const followed = (req, res) => {
-    return res.status(200).send({
-        status: 'success',
-        message: 'followed: ',
-    })
+    //get id user loged
+    let userId = req.user.id;
+    //get id by parameter + page
+    if(req.params.id) userId = req.params.id;
+    let page = 1;
+    if(req.params.page) page = req.params.page;
+    //user to page
+    const options = {
+        limit: 5,
+        page: page,
+        populate: {path : 'user followed', select:'-password -role -__v'}
+    }
+    //find follows
+    follow.paginate({'followed' : userId}, options).then(async(follows)  => {
+
+        let folloUserIds = await followService.followUserIds(req.user.id);
+
+        return res.status(200).send({
+            status: 'success',
+            follows: follows.docs,
+            total: follows.totalDocs,
+            totalpages: follows.totalPages,
+            userfollowing: folloUserIds.following,
+            userfollowme: folloUserIds.followers
+        })
+    }).catch(error => {
+        return res.status(400).send({
+            status: 'error',
+            message: 'error find users'
+        })
+    });
 };
 
 module.exports = {
