@@ -16,7 +16,7 @@ const followUserIds = async (identityUserId) => {
 
         let followerClean = [];
 
-        following.forEach(follows => {
+        followers.forEach(follows => {
             followerClean.push(follows.user);
         });
 
@@ -27,13 +27,21 @@ const followUserIds = async (identityUserId) => {
     } catch (error) {
         return {};
     }
-}
+};
 
 const followThisUser = async (identityUserId, profileUserId) => {
+    //get info follow
+    let following = await follow.findOne({ 'user': identityUserId , 'followed' : profileUserId}).select({ 'followed': 1, '_id': 0 });
 
+    let followers = await follow.find({'user' : profileUserId, 'followed': identityUserId }).select({ 'user': 1, '_id': 0 });
+
+    return {
+        following,
+        followers
+    }
 }
 
 module.exports = {
     followUserIds,
-    followThisUser
+    followThisUser,
 }

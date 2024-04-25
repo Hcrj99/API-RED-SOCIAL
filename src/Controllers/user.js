@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('../Services/jwt');
 const fs = require('fs');
 const path = require('path');
+const followService = require('../Services/followUserIds');
 
 const getUsers = (req, res) => {
     //Control page 
@@ -15,20 +16,27 @@ const getUsers = (req, res) => {
         limit: 5,
         page: page
     }
+    
 
-    user.paginate({}, options).then(users => {
+    user.paginate({}, options).then(async(users) => {
         if (!users) {
             return res.status(404).send({
                 status: 'error',
                 message: 'users not found'
             })
         };
+
+        //get id users that follow user loged + user that user loged follow
+        let folloUserIds = await followService.followUserIds(req.user.id);
+
         return res.status(200).send({
             status: 'success',
             message: 'List of users',
             users: users.docs,
             total: users.totalDocs,
-            totalpages: users.totalPages
+            totalpages: users.totalPages,
+            following: folloUserIds.following,
+            followers: folloUserIds.followers
         })
     }).catch(error => {
         return res.status(404).send({
@@ -43,10 +51,16 @@ const getUser = (req, res) => {
     const id = req.params.id;
     //get data user
 
-    user.findById(id).select({ password: 0, role: 0 }).then(userProfile => {
+    user.findById(id).select({ password: 0, role: 0 }).then(async (userProfile) => {
+
+        //follow info
+        const folloInfo = await followService.followThisUser(req.user.id, id);
+
         return res.status(200).send({
             status: 'success',
-            userProfile
+            user: userProfile,
+            following: folloInfo.following,
+            followers: folloInfo.followers
         })
     }).catch(error => {
         return res.status(404).json({
@@ -176,8 +190,6 @@ const updateUser = (req, res) => {
     }).then(async (users) => {
         let userIsset = false;
         users.forEach(user => {
-            console.log(user._id);
-            console.log(userIdentity.id);
             if (JSON.stringify(user._id) !== JSON.stringify(userIdentity.id)) {
                 userIsset = true;
             }
