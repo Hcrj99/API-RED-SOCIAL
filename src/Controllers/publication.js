@@ -34,7 +34,26 @@ const savePublication = (req, res) => {
     })
 };
 
+const detail = (req, res) => {
+    //get id publication from url 
+    const idPublication = req.params.id;
+
+    publication.findById(idPublication).then(publicationStorage => {
+        return res.status(200).send({
+            status: 'success',
+            message: 'publication: ',
+            publication: publicationStorage
+        })
+    }).catch(error => {
+        return res.status(400).send({
+            status: 'error',
+            message: 'publication not exists'
+        })
+    });
+};
+
 module.exports = {
     getPublications,
-    savePublication
+    savePublication,
+    detail
 }
