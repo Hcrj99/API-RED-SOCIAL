@@ -8,6 +8,7 @@ const check = require('../../Middlewares/auth');
 router.get('/getpublications', publicationController.getPublications);//Get publications
 router.post('/save', check.auth, publicationController.savePublication)//save publication
 router.get('/detail/:id', check.auth, publicationController.detail);//get one publication
+router.delete('/delete/:id', check.auth, publicationController.Eliminate);//Eliminate publication
 
-
+    
 module.exports = router;

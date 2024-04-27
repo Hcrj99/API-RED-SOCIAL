@@ -52,8 +52,28 @@ const detail = (req, res) => {
     });
 };
 
+const Eliminate = (req, res) => {
+    //get id from url
+    const idPublication = req.params.id;
+    //delete publication
+
+    publication.findOneAndDelete(idPublication).then(publicationDeleted => {
+        return res.status(200).send({
+            status: 'success',
+            message: 'publication eliminated ok'
+        })
+    }).catch(error => {
+        return res.status(400).send({
+            status: 'error',
+            message: 'publication not deleted'
+        })
+    });
+
+};
+
 module.exports = {
     getPublications,
     savePublication,
-    detail
+    detail,
+    Eliminate
 }
