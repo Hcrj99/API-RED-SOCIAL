@@ -11,13 +11,13 @@ const getUserPublications = (req, res) => {
     const options = {
         limit: 5,
         page: page,
-        populate: {path: 'user' , select: '-password -__v -createAt -role'},
+        populate: { path: 'user', select: '-password -__v -createAt -role' },
         sort: '-createat',
         select: '-__v'
     };
 
     publication.paginate({ 'user': idUser }, options).then(publications => {
-        if(publications.totalDocs === 0){
+        if (publications.totalDocs === 0) {
             return res.status(200).send({
                 status: 'success',
                 message: 'user has no publications'
@@ -103,9 +103,55 @@ const Eliminate = (req, res) => {
     });
 };
 
+
+const upload = (req, res) => {
+    const publicationId = req.params.id;
+
+    //get image if exists
+    if (!req.file) {
+        return res.status(404).send({
+            status: 'error',
+            message: 'Not recive file'
+        })
+    };
+
+    //get name document
+    let image = req.file.originalname;
+
+    //get extension + verify + save in db
+    const imageSplit = image.split('\.');
+    const extension = imageSplit[1];
+
+    if (extension !== 'png' && extension !== 'jpg' && extension !== 'jpeg' && extension !== 'gif') {
+
+        const filePath = req.file.path;
+        const fileDelete = fs.unlinkSync(filePath);
+
+        return res.status(400).json({
+            status: 'error',
+            message: 'Incorrect extension'
+        })
+    };
+    //save ind dbss
+    publication.findOneAndUpdate({ 'user' : req.user.id , '_id': publicationId}, { file: req.file.filename }, { new: true }).then(fileSave => {
+        return res.status(200).send({
+            status: 'success',
+            message: 'Upload correct',
+            publication: fileSave,
+            files: req.file
+        })
+    }).catch(error => {
+        return res.status(400).send({
+            status: 'error',
+            message: 'error upload file publication'
+        })
+    })
+};
+
 module.exports = {
     getUserPublications,
     savePublication,
     detail,
-    Eliminate
+    Eliminate,
+    upload
 }
