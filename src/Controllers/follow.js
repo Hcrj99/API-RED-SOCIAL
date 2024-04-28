@@ -67,7 +67,7 @@ const following = (req, res) => {
     const options = {
         limit: 5,
         page: page,
-        populate: {path : 'user followed', select:'-password -role -__v'}
+        populate: {path : 'user followed', select:'-password -role -__v -email'}
     }
     //find follows
     follow.paginate({'user': userId}, options).then(async(follows)  => {
@@ -103,7 +103,7 @@ const followed = (req, res) => {
     const options = {
         limit: 5,
         page: page,
-        populate: {path : 'user followed', select:'-password -role -__v'}
+        populate: {path : 'user followed', select:'-password -role -__v -email'}
     }
     //find follows
     follow.paginate({'followed' : userId}, options).then(async(follows)  => {

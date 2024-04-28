@@ -14,7 +14,8 @@ const getUsers = (req, res) => {
     //moongose pagination
     const options = {
         limit: 5,
-        page: page
+        page: page,
+        select: '-password -__v -email -role'
     }
     
 
@@ -206,6 +207,8 @@ const updateUser = (req, res) => {
         if (userUpdate.password) {
             let pwd = await bcrypt.hash(userUpdate.password, 10);
             userUpdate.password = pwd;
+        }else{
+            delete userUpdate.password;
         }
 
         //find + update

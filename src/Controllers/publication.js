@@ -14,7 +14,7 @@ const getUserPublications = (req, res) => {
     const options = {
         limit: 5,
         page: page,
-        populate: { path: 'user', select: '-password -__v -createAt -role' },
+        populate: { path: 'user', select: '-password -__v -createAt -role -email' },
         sort: '-createat',
         select: '-__v'
     };
@@ -74,7 +74,7 @@ const detail = (req, res) => {
     //get id publication from url 
     const idPublication = req.params.id;
 
-    publication.findById(idPublication).then(publicationStorage => {
+    publication.findById(idPublication).select('-__v').then(publicationStorage => {
         return res.status(200).send({
             status: 'success',
             message: 'publication: ',
@@ -177,7 +177,7 @@ const feed = async(req, res) => {
     const options = {
         limit: 5,
         page: page,
-        populate: {path : 'user', select: '-__v -password -role', sort: '-createAt',},
+        populate: {path : 'user', select: '-__v -password -role -email', sort: '-createAt',},
         select: '-__v'
     };
 
