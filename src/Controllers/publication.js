@@ -186,6 +186,14 @@ const feed = async(req, res) => {
         const myFollows = await followService.followUserIds(req.user.id);
 
         publication.paginate({user:{'$in' : myFollows.following}}, options).then(publications => {
+
+            if (publications.totalDocs === 0) {
+                return res.status(200).send({
+                    status: 'success',
+                    message: 'follows has no publications'
+                })
+            };
+
             return res.status(200).send({
                 status: 'success',
                 message: 'feed completed',
