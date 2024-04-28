@@ -23,7 +23,7 @@ router.post('/save', check.auth, publicationController.savePublication)//save pu
 router.get('/detail/:id', check.auth, publicationController.detail);//get one publication
 router.delete('/delete/:id', check.auth, publicationController.Eliminate);//Eliminate publication
 router.post('/upload/:id', [check.auth, uploads.single('file0')], publicationController.upload);//upload documents
-router.get('/media/:file', check.auth, userController.getAvatar);//get media file
-
+router.get('/media/:file', check.auth, publicationController.media);//get media file
+router.get('/feed/:page?', check.auth, publicationController.feed);//feed
 
 module.exports = router;

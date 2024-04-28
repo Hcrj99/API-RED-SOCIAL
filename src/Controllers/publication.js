@@ -1,5 +1,6 @@
 const publication = require('../Models/publication');
 const fs = require('fs');
+const path = require('path');
 
 const getUserPublications = (req, res) => {
     //get id user
@@ -167,11 +168,19 @@ const media = (req, res) => {
     });
 };
 
+const feed = (req, res) => {
+    return res.status(200).send({
+        status: 'success',
+        message: 'publications feed',
+    })
+};
+
 module.exports = {
     getUserPublications,
     savePublication,
     detail,
     Eliminate,
     upload,
-    media
+    media,
+    feed
 }
