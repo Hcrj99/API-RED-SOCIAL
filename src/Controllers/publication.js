@@ -1,4 +1,5 @@
 const publication = require('../Models/publication');
+const fs = require('fs');
 
 const getUserPublications = (req, res) => {
     //get id user
@@ -133,7 +134,7 @@ const upload = (req, res) => {
         })
     };
     //save ind dbss
-    publication.findOneAndUpdate({ 'user' : req.user.id , '_id': publicationId}, { file: req.file.filename }, { new: true }).then(fileSave => {
+    publication.findOneAndUpdate({ 'user': req.user.id, '_id': publicationId }, { file: req.file.filename }, { new: true }).then(fileSave => {
         return res.status(200).send({
             status: 'success',
             message: 'Upload correct',
@@ -148,10 +149,29 @@ const upload = (req, res) => {
     })
 };
 
+const media = (req, res) => {
+    //get parameter from  url
+    const file = req.params.file;
+    //get path
+    const filePath = './src/Uploads/Publications/' + file;
+    //if the file exists 
+    fs.stat(filePath, (error, exists) => {
+        if (error) {
+            return res.status(404).send({
+                status: 'error',
+                message: 'Not found the file'
+            })
+        }
+
+        return res.sendFile(path.resolve(filePath));
+    });
+};
+
 module.exports = {
     getUserPublications,
     savePublication,
     detail,
     Eliminate,
-    upload
+    upload,
+    media
 }
