@@ -1,6 +1,7 @@
 const publication = require('../Models/publication');
 const fs = require('fs');
 const path = require('path');
+const followService = require('../Services/followUserIds');
 
 const getUserPublications = (req, res) => {
     //get id user
@@ -168,11 +169,43 @@ const media = (req, res) => {
     });
 };
 
-const feed = (req, res) => {
-    return res.status(200).send({
-        status: 'success',
-        message: 'publications feed',
-    })
+const feed = async(req, res) => {
+    let page = 1
+
+    if(req.params.page) page = req.params.page;
+
+    const options = {
+        limit: 5,
+        page: page,
+        populate: {path : 'user', select: '-__v -password -role', sort: '-createAt',},
+        select: '-__v'
+    };
+
+    //get follows of the loged user
+    try{
+        const myFollows = await followService.followUserIds(req.user.id);
+
+        publication.paginate({user:{'$in' : myFollows.following}}, options).then(publications => {
+            return res.status(200).send({
+                status: 'success',
+                message: 'feed completed',
+                publications: publications.docs,
+                pages: publications.totalPages,
+                totalPublications: publications.totalDocs
+            })
+        }).catch(error => {
+            return res.status(404).send({
+                status: 'success',
+                message: 'error in list of publications'
+            })
+        });
+
+    }catch(error){
+        return res.status(404).send({
+            status: 'success',
+            message: 'error in list of publications'
+        })
+    };
 };
 
 module.exports = {
