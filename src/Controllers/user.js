@@ -93,7 +93,7 @@ const registerUser = (req, res) => {
     }).then(async (users) => {
         if (users && users.length >= 1) {
             return res.status(200).send({
-                status: 'success',
+                status: 'error',
                 message: 'the user exists'
             })
         }
