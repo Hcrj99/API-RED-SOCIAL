@@ -25,6 +25,6 @@ router.post('/login', userController.userLogin);//Login user
 router.get('/profile/:id', check.auth, userController.getUser);//get user
 router.put('/update', check.auth, userController.updateUser);//Update user
 router.post('/upload', [check.auth, uploads.single('file0')], userController.upload);//upload documents
-router.get('/avatar/:file', check.auth, userController.getAvatar);//get avatar
+router.get('/avatar/:file', userController.getAvatar);//get avatar
 
 module.exports = router;
