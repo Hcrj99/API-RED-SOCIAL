@@ -29,7 +29,7 @@ const getUserPublications = (req, res) => {
 
         return res.status(200).send({
             status: 'success',
-            users: publications.docs,
+            publications: publications.docs,
             page: publications.page,
             totalPublications: publications.totalDocs,
             totalPages: publications.totalPages
