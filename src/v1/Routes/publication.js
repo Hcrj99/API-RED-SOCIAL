@@ -25,5 +25,6 @@ router.delete('/delete/:id', check.auth, publicationController.Eliminate);//Elim
 router.post('/upload/:id', [check.auth, uploads.single('file0')], publicationController.upload);//upload documents
 router.get('/media/:file', publicationController.media);//get media file
 router.get('/feed/:page?', check.auth, publicationController.feed);//feed
+router.get('/publications/:page?', check.auth, publicationController.getTotalPublications);//all publications red social
 
 module.exports = router;

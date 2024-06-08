@@ -93,7 +93,7 @@ const Eliminate = (req, res) => {
     const idPublication = req.params.id;
     //delete publication
 
-    publication.findOneAndDelete({'_id': idPublication}).then(publicationDeleted => {
+    publication.findOneAndDelete({ '_id': idPublication }).then(publicationDeleted => {
         return res.status(200).send({
             status: 'success',
             message: 'publication eliminated ok',
@@ -170,23 +170,23 @@ const media = (req, res) => {
     });
 };
 
-const feed = async(req, res) => {
+const feed = async (req, res) => {
     let page = 1
 
-    if(req.params.page) page = req.params.page;
+    if (req.params.page) page = req.params.page;
 
     const options = {
         limit: 5,
         page: page,
-        populate: {path : 'user', select: '-__v -password -role -email', sort: '-createAt',},
+        populate: { path: 'user', select: '-__v -password -role -email', sort: '-createAt', },
         select: '-__v'
     };
 
     //get follows of the loged user
-    try{
+    try {
         const myFollows = await followService.followUserIds(req.user.id);
 
-        publication.paginate({user:{'$in' : myFollows.following}}, options).then(publications => {
+        publication.paginate({ user: { '$in': myFollows.following } }, options).then(publications => {
 
             if (publications.totalDocs === 0) {
                 return res.status(200).send({
@@ -209,13 +209,40 @@ const feed = async(req, res) => {
             })
         });
 
-    }catch(error){
+    } catch (error) {
         return res.status(404).send({
             status: 'success',
             message: 'error in list of publications'
         })
     };
 };
+
+const getTotalPublications = (req, res) => {
+    let page = 1;
+
+    if (req.params.page) page = req.params.page;
+
+    const options = {
+        limit: 5,
+        page: page,
+        populate: { path: 'user', select: '-__v -password -role -email', sort: '-createAt', },
+        select: '-__v'
+    };
+
+    publication.paginate({}, options).then(publications => {
+        return res.status(200).send({
+            status: 'success',
+            publications: publications.docs,
+            total: publications.totalDocs,
+            totalpages: publications.totalPages
+        })
+    }).catch(error => {
+        return res.status(404).send({
+            status: 'error',
+            message: 'publications noty found'
+        })
+    });
+}
 
 module.exports = {
     getUserPublications,
@@ -224,5 +251,6 @@ module.exports = {
     Eliminate,
     upload,
     media,
-    feed
+    feed,
+    getTotalPublications
 }
