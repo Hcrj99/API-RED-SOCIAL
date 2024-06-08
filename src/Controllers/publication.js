@@ -12,7 +12,7 @@ const getUserPublications = (req, res) => {
 
     //find all publications
     const options = {
-        limit: 5,
+        limit: 4,
         page: page,
         populate: { path: 'user', select: '-password -__v -createAt -role -email' },
         sort: '-createat',
@@ -93,10 +93,11 @@ const Eliminate = (req, res) => {
     const idPublication = req.params.id;
     //delete publication
 
-    publication.findOneAndDelete(idPublication).then(publicationDeleted => {
+    publication.findOneAndDelete({'_id': idPublication}).then(publicationDeleted => {
         return res.status(200).send({
             status: 'success',
-            message: 'publication eliminated ok'
+            message: 'publication eliminated ok',
+            iddeleted: publicationDeleted._id
         })
     }).catch(error => {
         return res.status(400).send({
