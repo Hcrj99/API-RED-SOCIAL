@@ -179,7 +179,8 @@ const feed = async (req, res) => {
         limit: 5,
         page: page,
         populate: { path: 'user', select: '-__v -password -role -email', sort: '-createAt', },
-        select: '-__v'
+        select: '-__v',
+        sort: {'_id': -1}
     };
 
     //get follows of the loged user
@@ -226,7 +227,8 @@ const getTotalPublications = (req, res) => {
         limit: 5,
         page: page,
         populate: { path: 'user', select: '-__v -password -role -email', sort: '-createAt', },
-        select: '-__v'
+        select: '-__v',
+        sort: {'_id': -1}
     };
 
     publication.paginate({}, options).then(publications => {
