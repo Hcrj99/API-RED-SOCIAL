@@ -4,6 +4,7 @@ const jwt = require('../Services/jwt');
 const fs = require('fs');
 const path = require('path');
 const followService = require('../Services/followUserIds');
+const validate = require('../helpers/validate');
 
 const getUsers = (req, res) => {
     //Control page 
@@ -81,6 +82,16 @@ const registerUser = (req, res) => {
         return res.status(400).json({
             status: 'error',
             message: 'Validation data incorrect need more Data'
+        });
+    };
+
+    //Upgrade validation
+    try{
+        validate(params);
+    }catch(error){
+        return res.status(400).json({
+            status: 'error',
+            message: 'Validation not passed'
         });
     };
 
